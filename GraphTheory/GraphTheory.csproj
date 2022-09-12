@@ -42,8 +42,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SimpleGraphWAL.cs" />
-    <Compile Include="SimpleGraphWAM.cs" />
+    <Compile Include="SparseGraph.cs" />
+    <Compile Include="DenseGraph.cs" />
     <Compile Include="Vertex.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

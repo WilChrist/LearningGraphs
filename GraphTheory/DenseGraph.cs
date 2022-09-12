@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace GraphTheory
 {
-    public class SimpleGraphWAM
+    public class DenseGraph
     {
         public int NumberOfVerticles { get; set; }
         public int NumberOfEdges { get; set; }
         public int [,] VertexMatrix { get; set; }
 
-        public SimpleGraphWAM( int numberOfVerticles = 10, int defaultWeight = int.MaxValue)
+        public DenseGraph( int numberOfVerticles = 10, int defaultWeight = int.MaxValue)
         {
             NumberOfEdges = 0;
 

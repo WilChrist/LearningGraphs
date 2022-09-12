@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace GraphTheory
 {
-    public class SimpleGraphWAL
+    public class SparseGraph
     {
         public bool IsUnDirectedGraph { get; set; } = false;
         public bool IsInNeedForSpeedMode { get; set; } = false;
         public List<Vertex> Vertexes { get; set; }
-        public SimpleGraphWAL()
+        public SparseGraph()
         {
             Vertexes = new List<Vertex>();
         }
