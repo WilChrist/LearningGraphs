@@ -6,9 +6,20 @@ using System.Threading.Tasks;
 
 namespace GraphTheory
 {
+    /// <summary>
+    /// A graph in which the number of edges is much less than the possible number of edges.
+    /// Typically, a sparse (connected) graph has about as many edges as vertices
+    /// This is an adjacency list representation of a graph, which consists of n lists one for each vertex v_i, 1<=i<=n, which gives the vertices to which v_i is adjacent.
+    /// Note: A directed graph can have at most n(n-1) edges, where n is the number of vertices. An undirected graph can have at most n(n-1)/2 edges.
+    /// </summary>
     public class SparseGraph
     {
         public bool IsUnDirectedGraph { get; set; } = false;
+        /// <summary>
+        /// when true, allows to skip the checking of already existing vertex with a certain ID before doing the operation with non existence of that ID as a prerequisite.
+        /// skipping that verification step make the execution faster (from O(N) to O(1)) but more hard to debug.
+        /// It's recommended to set it to true only in prod environnement.
+        /// </summary>
         public bool IsInNeedForSpeedMode { get; set; } = false;
         public List<Vertex> Vertexes { get; set; }
         public SparseGraph()
@@ -45,7 +56,7 @@ namespace GraphTheory
             Vertex secondVertex = Vertexes.First(v => v.Id == secondVertexId);
 
             if (!IsInNeedForSpeedMode) {
-                foreach (var vt in firstVertex.AdjacencyList)
+                foreach (var vt in firstVertex.Neighbors)
                 {
                     if (vt.Item1.Id == secondVertexId)
                     {
@@ -54,7 +65,7 @@ namespace GraphTheory
                 }
             }
             
-            firstVertex.AdjacencyList.Add(new Tuple<Vertex, int>(secondVertex, weight));
+            firstVertex.Neighbors.Add(new Tuple<Vertex, int>(secondVertex, weight));
         }
     }
 }

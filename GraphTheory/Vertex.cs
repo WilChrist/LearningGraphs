@@ -12,11 +12,23 @@ namespace GraphTheory
         GRAY = 1,
         BLACK = 2
     }
+    /// <summary>
+    /// "Vertex" is a synonym for a node of a graph, i.e., one of the points on which the graph is defined and which may be connected by graph edges.
+    /// </summary>
     public class Vertex
     {
+        /// <summary>
+        /// unique identifier of a vertex
+        /// </summary>
         public int Id { get; set; }
+        /// <summary>
+        /// object representing the content of the graph, may need to be parsed
+        /// </summary>
         public object Value { get; set; }
-        public List<Tuple<Vertex, int>> AdjacencyList { get; set; }
+        /// <summary>
+        /// list of tuple for each vertex neighbor and its weight
+        /// </summary>
+        public List<Tuple<Vertex, int>> Neighbors { get; set; }
 
         public VERTEXCOLOR Color { get; set; } = VERTEXCOLOR.WHITE;
         public int Distance { get; set; } = int.MaxValue;
@@ -31,7 +43,7 @@ namespace GraphTheory
             Id = id;
             Value = value;
 
-            AdjacencyList = new List<Tuple<Vertex, int>>();
+            Neighbors = new List<Tuple<Vertex, int>>();
         }
     }
 }
