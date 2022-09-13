@@ -36,7 +36,7 @@ namespace GraphTheory
 
         public Vertex()
         {
-
+            Neighbors = new List<Tuple<Vertex, int>>();
         }
         public Vertex(int id, object value = null)
         {
@@ -44,6 +44,7 @@ namespace GraphTheory
             Value = value;
 
             Neighbors = new List<Tuple<Vertex, int>>();
+            Parent = null;
         }
     }
 }

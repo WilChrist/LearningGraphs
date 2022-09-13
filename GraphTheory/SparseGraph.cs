@@ -24,22 +24,86 @@ namespace GraphTheory
         public List<Vertex> Vertexes { get; set; }
         public SparseGraph()
         {
-            Vertexes = new List<Vertex>();
+            Vertexes = new List<Vertex>();Vertexes.OrderBy(x => x.Id);
         }
-        public void AddVertex(int id, object value)
+
+        public void BFS_Explore(int startingVertexID)
         {
+            Vertex startingVertex;
+            startingVertex = InitializeAndFindStartingVertex(startingVertexID);
+
+            if (startingVertex == null)
+            {
+                throw new Exception($"Find Starting Vertex Exception: starting vertex with Id = {startingVertexID} can't be found in the graph");
+            }
+
+            Queue<Vertex> vertexQueue = new Queue<Vertex>();
+
+            startingVertex.Color = VERTEXCOLOR.GRAY;
+            startingVertex.Distance = 0;
+            vertexQueue.Enqueue(startingVertex);
+            while (vertexQueue.Count > 0)
+            {
+                Vertex currentVertex = vertexQueue.Dequeue();
+                foreach (var v in currentVertex.Neighbors)
+                {
+                    if (v.Item1.Color == VERTEXCOLOR.WHITE)
+                    {
+                        v.Item1.Color = VERTEXCOLOR.GRAY;
+                        v.Item1.Distance = currentVertex.Distance + 6;
+                        v.Item1.Parent = currentVertex;
+                        vertexQueue.Enqueue(v.Item1);
+                    }
+                }
+                currentVertex.Color = VERTEXCOLOR.BLACK;
+            }
+
+        }
+        Vertex InitializeAndFindStartingVertex( int startingVertexID) {
+            Vertex vertex = null;
             if (!IsInNeedForSpeedMode)
             {
                 foreach (var v in Vertexes)
                 {
-                    if(v.Id == id)
+                    v.Color = VERTEXCOLOR.WHITE;
+                    v.Distance = -1;
+                    v.Parent = null;
+                    if (v.Id == startingVertexID)
                     {
-                        throw new Exception($"Adding Vertex Exception: vertex with Id = {id} already exists in the graph");
+                        vertex = v;
                     }
                 }
             }
-            
-            Vertexes.Add(new Vertex(id, value));
+            else
+            {
+                vertex = Vertexes[startingVertexID - 1];  // ToDo: verify this assumption for the problem you'll be trying to solve
+            }
+
+            return vertex;
+        }
+        public bool IsVertexInGraph(int id)
+        {
+            bool answer = false;
+            foreach (var v in Vertexes)
+            {
+                if (v.Id == id)
+                {
+                    answer = true;
+                }
+                
+            }
+
+            return answer;
+        }
+        public void AddVertex(int id, object value=null)
+        {
+            bool isDoAdd = true;
+            if (!IsInNeedForSpeedMode)
+            {
+                isDoAdd = !IsVertexInGraph(id);
+            }
+            if(isDoAdd)
+                Vertexes.Add(new Vertex(id, value));
         }
 
         public void AddEdge(int firstVertexId, int secondVertexId, int weight = 0)
@@ -52,10 +116,13 @@ namespace GraphTheory
         }
         void AddEdgeInDirection(int firstVertexId, int secondVertexId, int weight = 0)
         {
-            Vertex firstVertex = Vertexes.First(v => v.Id == firstVertexId);
-            Vertex secondVertex = Vertexes.First(v => v.Id == secondVertexId);
+            Vertex firstVertex;
+            Vertex secondVertex;
 
-            if (!IsInNeedForSpeedMode) {
+            if (!IsInNeedForSpeedMode)
+            {
+                firstVertex = Vertexes.First(v => v.Id == firstVertexId);
+                secondVertex = Vertexes.First(v => v.Id == secondVertexId);
                 foreach (var vt in firstVertex.Neighbors)
                 {
                     if (vt.Item1.Id == secondVertexId)
@@ -64,7 +131,12 @@ namespace GraphTheory
                     }
                 }
             }
-            
+            else
+            {
+                firstVertex = Vertexes[firstVertexId - 1]; // ToDo: verify this assumption for the problem you'll be trying to solve
+                secondVertex = Vertexes[secondVertexId - 1];
+            }
+
             firstVertex.Neighbors.Add(new Tuple<Vertex, int>(secondVertex, weight));
         }
     }
