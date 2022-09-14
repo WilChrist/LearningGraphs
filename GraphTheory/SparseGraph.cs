@@ -24,7 +24,7 @@ namespace GraphTheory
         public List<Vertex> Vertexes { get; set; }
         public SparseGraph()
         {
-            Vertexes = new List<Vertex>();Vertexes.OrderBy(x => x.Id);
+            Vertexes = new List<Vertex>();
         }
 
         public void BFS_Explore(int startingVertexID)
