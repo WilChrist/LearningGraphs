@@ -26,6 +26,33 @@ namespace GraphTheory
         {
             Vertexes = new List<Vertex>();
         }
+        public void DFS_Explore(int startingVertexID=-1) {
+            if (startingVertexID != -1)
+            {
+                Vertex startingVertex;
+                startingVertex = InitializeAndFindStartingVertex(startingVertexID);
+                DFS(startingVertex);
+            }
+
+            foreach (var v in Vertexes)
+            {
+                if (v.Color == VERTEXCOLOR.WHITE)
+                    DFS(v);
+            }
+
+
+        }
+        public void DFS(Vertex vertex) {
+            vertex.Color = VERTEXCOLOR.GRAY;
+            vertex.Distance++;
+            foreach (var v in vertex.Neighbors)
+            {
+                if(v.Item1.Color==VERTEXCOLOR.WHITE)
+                    DFS(v.Item1);
+            }
+            vertex.Color = VERTEXCOLOR.BLACK;
+        }
+
 
         public void BFS_Explore(int startingVertexID)
         {
