@@ -26,31 +26,49 @@ namespace GraphTheory
         {
             Vertexes = new List<Vertex>();
         }
-        public void DFS_Explore(int startingVertexID=-1) {
+        public int DFS_Explore(int startingVertexID=-1) {
+            int height = 0;
+            Dictionary<int, int> memo = new Dictionary<int, int>();
             if (startingVertexID != -1)
             {
                 Vertex startingVertex;
                 startingVertex = InitializeAndFindStartingVertex(startingVertexID);
-                DFS(startingVertex);
+                height+=DFS(startingVertex, memo);
             }
 
             foreach (var v in Vertexes)
             {
                 if (v.Color == VERTEXCOLOR.WHITE)
-                    DFS(v);
+                    height = Math.Max(DFS(v, memo) + 1, height);
             }
 
-
+            return memo.OrderByDescending(key => key.Value).First().Value;
         }
-        public void DFS(Vertex vertex) {
+        public int DFS(Vertex vertex, Dictionary<int, int> memo) {
+            if (memo.ContainsKey(vertex.Id))
+            {
+                return memo[vertex.Id];
+            }
             vertex.Color = VERTEXCOLOR.GRAY;
+            int h = 1;
             vertex.Distance++;
             foreach (var v in vertex.Neighbors)
             {
-                if(v.Item1.Color==VERTEXCOLOR.WHITE)
-                    DFS(v.Item1);
+
+                if (v.Item1.Color == VERTEXCOLOR.WHITE)
+                {
+                    //h = v.Item2;
+                    h = Math.Max(DFS(v.Item1, memo) + 1, h);
+                }
+                else if(v.Item1.Color == VERTEXCOLOR.BLACK)
+                {
+                    h = Math.Max(memo[v.Item1.Id] + 1, h);
+                }
+                    
             }
             vertex.Color = VERTEXCOLOR.BLACK;
+            memo.Add(vertex.Id, h);
+            return h;
         }
 
 
@@ -103,7 +121,7 @@ namespace GraphTheory
             }
             else
             {
-                vertex = Vertexes[startingVertexID - 1];  // ToDo: verify this assumption for the problem you'll be trying to solve
+                vertex = Vertexes[startingVertexID];  // ToDo: verify this assumption for the problem you'll be trying to solve
             }
 
             return vertex;
@@ -160,8 +178,8 @@ namespace GraphTheory
             }
             else
             {
-                firstVertex = Vertexes[firstVertexId - 1]; // ToDo: verify this assumption for the problem you'll be trying to solve
-                secondVertex = Vertexes[secondVertexId - 1];
+                firstVertex = Vertexes[firstVertexId]; // ToDo: verify this assumption for the problem you'll be trying to solve
+                secondVertex = Vertexes[secondVertexId];
             }
 
             firstVertex.Neighbors.Add(new Tuple<Vertex, int>(secondVertex, weight));
