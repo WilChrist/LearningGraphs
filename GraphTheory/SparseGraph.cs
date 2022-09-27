@@ -21,10 +21,20 @@ namespace GraphTheory
         /// It's recommended to set it to true only in prod environnement.
         /// </summary>
         public bool IsInNeedForSpeedMode { get; set; } = false;
+        public bool IsTopologicalOrderNeeded { get; set; } = false;
         public List<Vertex> Vertexes { get; set; }
+        public List<Vertex> VertexesInTopologicalOrder { get; set; }
         public SparseGraph()
         {
             Vertexes = new List<Vertex>();
+        }
+        public List<Vertex> TopologicalSort(int startingVertexID = -1)
+        {
+            VertexesInTopologicalOrder = new List<Vertex>();
+            IsTopologicalOrderNeeded = true;
+            DFS_Explore(startingVertexID);
+            IsTopologicalOrderNeeded = false;
+            return VertexesInTopologicalOrder;
         }
         public void DFS_Explore(int startingVertexID=-1) {
             if (startingVertexID != -1)
@@ -51,6 +61,10 @@ namespace GraphTheory
                     DFS(v.Item1);
             }
             vertex.Color = VERTEXCOLOR.BLACK;
+            if (IsTopologicalOrderNeeded)
+            {
+                VertexesInTopologicalOrder.Add(vertex);
+            }
         }
 
 
