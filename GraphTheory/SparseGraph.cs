@@ -30,6 +30,64 @@ namespace GraphTheory
         {
             Vertexes = new List<Vertex>();
         }
+        public bool ShortestPath_BellmanFord(int startingVertexID)
+        {
+            bool isANegativeCircleNotExists = true;
+
+            Vertex startingVertex;
+            startingVertex = InitializeAndFindStartingVertex(startingVertexID);
+
+            if (startingVertex == null)
+            {
+                throw new Exception($"Find Starting Vertex Exception: starting vertex with Id = {startingVertexID} can't be found in the graph");
+            }
+            else
+            {
+                startingVertex.Distance = 0;
+                int outerLoopCount = Vertexes.Count-1;
+
+                for (int i = 0; i < outerLoopCount; i++)
+                {
+                    foreach (var u in Vertexes)
+                    {
+                        foreach (var v in u.Neighbors)
+                        {
+                            if (u.Distance != int.MaxValue)
+                            {
+                                Relax(u, v.Item1, v.Item2);
+                            }
+                        }
+                    }
+                }
+
+                // Negatives weigth cycle checking
+                foreach (var u in Vertexes)
+                {
+                    foreach (var v in u.Neighbors)
+                    {
+                        if (u.Distance != int.MaxValue)
+                        {
+                            if (v.Item1.Distance > u.Distance + v.Item2)
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return isANegativeCircleNotExists;
+        }
+
+        private void Relax(Vertex u, Vertex v, int weigth)
+        {
+            if(v.Distance> u.Distance + weigth)
+            {
+                v.Distance = u.Distance + weigth;
+                v.Parent = u;
+            }
+        }
+
         public List<List<Vertex>> GetStronglyConnectedComponents()
         {
             IsStronglyConnectedComponentsNeeded = true;
