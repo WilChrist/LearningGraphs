@@ -22,12 +22,59 @@ namespace GraphTheory
         /// </summary>
         public bool IsInNeedForSpeedMode { get; set; } = false;
         public bool IsTopologicalOrderNeeded { get; set; } = false;
+        public bool IsStronglyConnectedComponentsNeeded { get; set; } = false;
         public List<Vertex> Vertexes { get; set; }
         public List<Vertex> VertexesInTopologicalOrder { get; set; }
+        public List<List<Vertex>> StronglyConnectedComponents { get; set; }
         public SparseGraph()
         {
             Vertexes = new List<Vertex>();
         }
+        public List<List<Vertex>> GetStronglyConnectedComponents()
+        {
+            IsStronglyConnectedComponentsNeeded = true;
+            List<List<Vertex>> components = new List<List<Vertex>>();
+            TopologicalSort();
+            List<Vertex> VertexesInTopologicalReversedOrder = Enumerable.Reverse(VertexesInTopologicalOrder).ToList();
+            List<Vertex> vertexesTransposed = Transpose();
+
+            foreach (var vito in VertexesInTopologicalReversedOrder)
+            {
+                List<Vertex> component = new List<Vertex>();
+                Vertex vt = vertexesTransposed.First(v => v.Id == vito.Id);
+                if (vt.Color == VERTEXCOLOR.WHITE)
+                {
+                    DFS(vt, component);
+                    components.Add(component);
+                }
+            }
+
+            StronglyConnectedComponents = components;
+            IsStronglyConnectedComponentsNeeded = false;
+            return components;
+        }
+
+        private List<Vertex> Transpose()
+        {
+            List<Vertex> vertexesClone = new List<Vertex>();
+            foreach (Vertex vertex in Vertexes)
+            {
+                vertexesClone.Add(new Vertex(vertex.Id, vertex.Value));
+            }
+
+            foreach (Vertex vertex in Vertexes)
+            {
+                Vertex vertex2 = vertexesClone.First(v => v.Id == vertex.Id);
+                foreach (var n in vertex.Neighbors)
+                {
+                    Vertex vertex1 = vertexesClone.First(v => v.Id == n.Item1.Id);
+                    vertex1.Neighbors.Add(Tuple.Create(vertex2,n.Item2));
+                }
+            }
+            return vertexesClone;
+
+        }
+
         public List<Vertex> TopologicalSort(int startingVertexID = -1)
         {
             VertexesInTopologicalOrder = new List<Vertex>();
@@ -52,18 +99,29 @@ namespace GraphTheory
 
 
         }
-        public void DFS(Vertex vertex) {
+        public void DFS(Vertex vertex, List<Vertex> component = null) {
             vertex.Color = VERTEXCOLOR.GRAY;
             vertex.Distance++;
             foreach (var v in vertex.Neighbors)
             {
-                if(v.Item1.Color==VERTEXCOLOR.WHITE)
+                if (v.Item1.Color == VERTEXCOLOR.WHITE)
+                {
+                    v.Item1.Parent = vertex;
                     DFS(v.Item1);
+                }
+                    
             }
             vertex.Color = VERTEXCOLOR.BLACK;
             if (IsTopologicalOrderNeeded)
             {
                 VertexesInTopologicalOrder.Add(vertex);
+            }
+            if (IsStronglyConnectedComponentsNeeded)
+            {
+                if (component != null)
+                {
+                    component.Add(vertex);
+                }
             }
         }
 
