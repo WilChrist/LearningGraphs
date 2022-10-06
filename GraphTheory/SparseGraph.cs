@@ -30,6 +30,31 @@ namespace GraphTheory
         {
             Vertexes = new List<Vertex>();
         }
+        public void ShortestPath_DAG(int startingVertexID)
+        {
+            List<Vertex> vertexesInTopologicalOrder = TopologicalSort(startingVertexID);
+
+            Vertex startingVertex = InitializeAndFindStartingVertex(startingVertexID);
+
+            // May not be necessary depending of if the distance have been processed before during the same execution
+            foreach (var v in Vertexes)
+            {
+                v.Color = VERTEXCOLOR.WHITE;
+                v.Distance = int.MaxValue;
+                v.Parent = null;
+            }
+
+            startingVertex.Distance = 0;
+
+            foreach (Vertex u in vertexesInTopologicalOrder)
+            {
+                foreach (Tuple<Vertex, int> v in u.Neighbors)
+                {
+                    Relax(u, v.Item1, v.Item2);
+                }
+            }
+
+        }
         public bool ShortestPath_BellmanFord(int startingVertexID)
         {
             bool isANegativeCircleNotExists = true;
